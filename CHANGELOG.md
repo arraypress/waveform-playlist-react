@@ -16,7 +16,7 @@ Initial release.
   - A declarative, required `tracks` array
     (`WaveformPlaylistTrackInput[]`) rendered into the `[data-track]` /
     `[data-chapter]` child markup the playlist constructor parses on
-    mount. Each track accepts `url`, `title`, `subtitle`, `artwork`,
+    mount. Each track accepts `url`, `title`, `artist`, `artwork`,
     `album`, `duration`, `markers`, and `chapters`
     (`{ time, label, color? }`, where `time` is a seconds number or a
     `'M:SS'` string).

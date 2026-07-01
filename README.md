@@ -55,8 +55,8 @@ The vanilla `WaveformPlaylist` constructor reads its tracks from `[data-track]` 
 ```tsx
 <WaveformPlaylist
   tracks={[
-    { url: '/audio/song-1.mp3', title: 'Summer Vibes', subtitle: 'Beach Sounds', artwork: '/img/1.jpg', duration: '3:45' },
-    { url: '/audio/song-2.mp3', title: 'Night Drive', subtitle: 'Synthwave Mix', artwork: '/img/2.jpg', duration: '4:12' },
+    { url: '/audio/song-1.mp3', title: 'Summer Vibes', artist: 'Beach Sounds', artwork: '/img/1.jpg', duration: '3:45' },
+    { url: '/audio/song-2.mp3', title: 'Night Drive', artist: 'Synthwave Mix', artwork: '/img/2.jpg', duration: '4:12' },
   ]}
   continuous
   showPlayState
@@ -73,7 +73,7 @@ A single track with chapters shows the chapter list **and** renders the chapters
     {
       url: '/audio/episode-42.mp3',
       title: 'Episode 42: AI Revolution',
-      subtitle: 'with Dr. Sarah Chen',
+      artist: 'with Dr. Sarah Chen',
       chapters: [
         { time: 0, label: 'Introduction' },
         { time: '5:30', label: 'Main Topic', color: '#a855f7' },
@@ -143,7 +143,7 @@ Each `WaveformPlaylistTrackInput`:
 | ---------- | --------------------------------- | ---------------------------------------------- |
 | `url`      | `string` (required)               | Audio file URL                                 |
 | `title`    | `string`                          | Falls back to the filename if omitted          |
-| `subtitle` | `string`                          | Artist / description                           |
+| `artist`   | `string`                          | Artist / description                           |
 | `artwork`  | `string`                          | Album / episode artwork URL                    |
 | `album`    | `string`                          | Forwarded to the Media Session API             |
 | `duration` | `string`                          | Display duration, e.g. `'3:45'`                |
@@ -166,7 +166,7 @@ Each `WaveformPlaylistTrackInput`:
 
 Every visualisation / colour / playback / behaviour option from the core player surfaces as a typed prop and is forwarded to the embedded player: `waveformStyle`, `height`, `samples`, `barWidth`, `barSpacing`, `barRadius`, `colorPreset`, `waveformColor`, `progressColor`, `buttonColor`, `buttonHoverColor`, `textColor`, `textSecondaryColor`, `backgroundColor`, `borderColor`, `playbackRate`, `showPlaybackSpeed`, `playbackRates`, `showControls`, `showInfo`, `showTime`, `showHoverTime`, `showBPM`, `bpm`, `buttonAlign`, `buttonStyle`, `accessibleSeek`, `seekLabel`, `errorText`, `showMarkers`, `autoplay`, `singlePlay`, `playOnSeek`, `enableMediaSession`, `playIcon`, `pauseIcon`, `audioMode`, `preload`.
 
-Per-track content (`url`, `title`, `subtitle`, `artwork`, `album`, `markers`) is **not** here — it comes from the `tracks` array.
+Per-track content (`url`, `title`, `artist`, `artwork`, `album`, `markers`) is **not** here — it comes from the `tracks` array.
 
 ### React-specific
 

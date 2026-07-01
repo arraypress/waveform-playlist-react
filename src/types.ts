@@ -94,8 +94,8 @@ export interface WaveformPlaylistTrackInput {
 	url: string;
 	/** Track title (`data-title`). Falls back to the filename if omitted. */
 	title?: string;
-	/** Artist or description shown as the subtitle (`data-subtitle`). */
-	subtitle?: string;
+	/** Artist or description shown as the artist line (`data-artist`). */
+	artist?: string;
 	/** Album artwork URL (`data-artwork`). */
 	artwork?: string;
 	/** Album name, forwarded to the Media Session API (`data-album`). */
@@ -161,7 +161,7 @@ export interface WaveformPlaylistHandle {
  *      (`'list' | 'minimal'`, which overrides the player's own `layout`).
  *   2. **Pass-through player options** — every visualisation / colour /
  *      behaviour option from the core `WaveformPlayerOptions`, minus the
- *      per-track content fields (`url`, `title`, `subtitle`, `artwork`,
+ *      per-track content fields (`url`, `title`, `artist`, `artwork`,
  *      `album`, `markers`, `waveform`) which come from `tracks`, the
  *      `style`/`src` aliases, the player's `layout` (overridden above), and
  *      the lifecycle callbacks.
@@ -188,7 +188,7 @@ export interface WaveformPlaylistProps
 			| 'style'
 			| 'layout'
 			| 'title'
-			| 'subtitle'
+			| 'artist'
 			| 'artwork'
 			| 'album'
 			| 'markers'

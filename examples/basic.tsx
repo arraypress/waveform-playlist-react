@@ -32,9 +32,9 @@ import {
 /* Example 1 — Minimal music playlist */
 export function MinimalExample() {
 	const tracks: WaveformPlaylistTrackInput[] = [
-		{ url: '/audio/track-1.mp3', title: 'Summer Vibes', subtitle: 'Beach Sounds' },
-		{ url: '/audio/track-2.mp3', title: 'Night Drive', subtitle: 'Synthwave Mix' },
-		{ url: '/audio/track-3.mp3', title: 'Morning Coffee', subtitle: 'Lo-Fi' },
+		{ url: '/audio/track-1.mp3', title: 'Summer Vibes', artist: 'Beach Sounds' },
+		{ url: '/audio/track-2.mp3', title: 'Night Drive', artist: 'Synthwave Mix' },
+		{ url: '/audio/track-3.mp3', title: 'Morning Coffee', artist: 'Lo-Fi' },
 	];
 
 	return <WaveformPlaylist tracks={tracks} />;
@@ -46,7 +46,7 @@ export function MusicPlaylistExample() {
 		{
 			url: '/audio/song-1.mp3',
 			title: 'Summer Vibes',
-			subtitle: 'Beach Sounds',
+			artist: 'Beach Sounds',
 			artwork: '/img/cover-1.jpg',
 			album: 'Sunset Sessions',
 			duration: '3:45',
@@ -54,7 +54,7 @@ export function MusicPlaylistExample() {
 		{
 			url: '/audio/song-2.mp3',
 			title: 'Night Drive',
-			subtitle: 'Synthwave Mix',
+			artist: 'Synthwave Mix',
 			artwork: '/img/cover-2.jpg',
 			album: 'Sunset Sessions',
 			duration: '4:12',
@@ -78,7 +78,7 @@ export function PodcastChaptersExample() {
 		{
 			url: '/audio/episode-42.mp3',
 			title: 'Episode 42: AI Revolution',
-			subtitle: 'with Dr. Sarah Chen',
+			artist: 'with Dr. Sarah Chen',
 			artwork: '/img/episode-42.jpg',
 			chapters: [
 				{ time: 0, label: 'Introduction' },
@@ -99,7 +99,7 @@ export function CourseModulesExample() {
 		{
 			url: '/audio/lesson-1.mp3',
 			title: 'Module 1: Introduction',
-			subtitle: 'Getting Started',
+			artist: 'Getting Started',
 			chapters: [
 				{ time: '0:00', label: 'Welcome' },
 				{ time: '10:00', label: 'Setup' },

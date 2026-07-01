@@ -70,8 +70,8 @@ beforeEach(() => {
 
 /** A couple of representative tracks reused across tests. */
 const TWO_TRACKS: WaveformPlaylistTrackInput[] = [
-	{ url: '/audio/a.mp3', title: 'Track A', subtitle: 'Artist A' },
-	{ url: '/audio/b.mp3', title: 'Track B', subtitle: 'Artist B' },
+	{ url: '/audio/a.mp3', title: 'Track A', artist: 'Artist A' },
+	{ url: '/audio/b.mp3', title: 'Track B', artist: 'Artist B' },
 ];
 
 /**
@@ -143,7 +143,7 @@ describe('<WaveformPlaylist> — track markup', () => {
 					{
 						url: '/audio/a.mp3',
 						title: 'Track A',
-						subtitle: 'Artist A',
+						artist: 'Artist A',
 						artwork: '/img/a.jpg',
 						album: 'Album A',
 						duration: '3:45',
@@ -157,7 +157,7 @@ describe('<WaveformPlaylist> — track markup', () => {
 		const el = tracks[0] as HTMLElement;
 		expect(el.dataset.url).toBe('/audio/a.mp3');
 		expect(el.dataset.title).toBe('Track A');
-		expect(el.dataset.subtitle).toBe('Artist A');
+		expect(el.dataset.artist).toBe('Artist A');
 		expect(el.dataset.artwork).toBe('/img/a.jpg');
 		expect(el.dataset.album).toBe('Album A');
 		expect(el.dataset.duration).toBe('3:45');

@@ -112,7 +112,7 @@ function buildPlaylistOptions(props: WaveformPlaylistProps): Record<string, unkn
 	if (props.showPlayState !== undefined) opts.showPlayState = props.showPlayState;
 
 	/* Pass-through player options — forwarded to the embedded player the
-	 * playlist drives. Per-track content (url/title/subtitle/artwork/album/
+	 * playlist drives. Per-track content (url/title/artist/artwork/album/
 	 * markers/waveform) is NOT here; it comes from the rendered markup. */
 	if (props.audioMode !== undefined) opts.audioMode = props.audioMode;
 	if (props.preload !== undefined) opts.preload = props.preload;
@@ -382,7 +382,7 @@ export const WaveformPlaylist = forwardRef<WaveformPlaylistHandle, WaveformPlayl
 						data-track=""
 						data-url={track.url}
 						data-title={track.title}
-						data-subtitle={track.subtitle}
+						data-artist={track.artist}
 						data-artwork={track.artwork}
 						data-album={track.album}
 						data-duration={track.duration}
