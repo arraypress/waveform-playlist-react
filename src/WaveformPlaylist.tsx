@@ -138,6 +138,8 @@ function buildPlaylistOptions(props: WaveformPlaylistProps): Record<string, unkn
 	/* UI toggles */
 	if (props.showControls !== undefined) opts.showControls = props.showControls;
 	if (props.showInfo !== undefined) opts.showInfo = props.showInfo;
+	if (props.artworkAlt !== undefined) opts.artworkAlt = props.artworkAlt;
+	if (props.unknownTrackText !== undefined) opts.unknownTrackText = props.unknownTrackText;
 	if (props.showTime !== undefined) opts.showTime = props.showTime;
 	if (props.showHoverTime !== undefined) opts.showHoverTime = props.showHoverTime;
 	if (props.showBPM !== undefined) opts.showBPM = props.showBPM;
@@ -148,6 +150,9 @@ function buildPlaylistOptions(props: WaveformPlaylistProps): Record<string, unkn
 	/* Accessibility */
 	if (props.accessibleSeek !== undefined) opts.accessibleSeek = props.accessibleSeek;
 	if (props.seekLabel !== undefined) opts.seekLabel = props.seekLabel;
+	if (props.seekValueText !== undefined) opts.seekValueText = props.seekValueText;
+	if (props.playPauseLabel !== undefined) opts.playPauseLabel = props.playPauseLabel;
+	if (props.speedLabel !== undefined) opts.speedLabel = props.speedLabel;
 
 	/* Error UI */
 	if (props.errorText !== undefined) opts.errorText = props.errorText;
@@ -292,6 +297,8 @@ export const WaveformPlaylist = forwardRef<WaveformPlaylistHandle, WaveformPlayl
 			props.playbackRates,
 			props.showControls,
 			props.showInfo,
+			props.artworkAlt,
+			props.unknownTrackText,
 			props.showTime,
 			props.showHoverTime,
 			props.showBPM,
@@ -300,6 +307,9 @@ export const WaveformPlaylist = forwardRef<WaveformPlaylistHandle, WaveformPlayl
 			props.buttonStyle,
 			props.accessibleSeek,
 			props.seekLabel,
+			props.seekValueText,
+			props.playPauseLabel,
+			props.speedLabel,
 			props.errorText,
 			props.showMarkers,
 			props.autoplay,
