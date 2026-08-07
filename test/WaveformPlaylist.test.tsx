@@ -264,6 +264,15 @@ describe('<WaveformPlaylist> — option pass-through', () => {
 		expect(opts.showBPM).toBe(true);
 	});
 
+	it('forwards the audio-loading options (preload, crossOrigin)', async () => {
+		render(<WaveformPlaylist tracks={TWO_TRACKS} preload="metadata" crossOrigin="anonymous" />);
+		await waitForMount();
+		const { opts } = ctorCalls[0];
+
+		expect(opts.preload).toBe('metadata');
+		expect(opts.crossOrigin).toBe('anonymous');
+	});
+
 	it('does not pass options for props the consumer omitted', async () => {
 		render(<WaveformPlaylist tracks={TWO_TRACKS} />);
 		await waitForMount();
@@ -274,6 +283,7 @@ describe('<WaveformPlaylist> — option pass-through', () => {
 		expect('waveformStyle' in opts).toBe(false);
 		expect('height' in opts).toBe(false);
 		expect('showBPM' in opts).toBe(false);
+		expect('crossOrigin' in opts).toBe(false);
 	});
 
 	it('forwards arrays as-is (playbackRates)', async () => {

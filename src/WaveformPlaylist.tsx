@@ -116,6 +116,7 @@ function buildPlaylistOptions(props: WaveformPlaylistProps): Record<string, unkn
 	 * markers/waveform) is NOT here; it comes from the rendered markup. */
 	if (props.audioMode !== undefined) opts.audioMode = props.audioMode;
 	if (props.preload !== undefined) opts.preload = props.preload;
+	if (props.crossOrigin !== undefined) opts.crossOrigin = props.crossOrigin;
 
 	/* Waveform visualisation */
 	if (props.waveformStyle !== undefined) opts.waveformStyle = props.waveformStyle;
@@ -283,6 +284,7 @@ export const WaveformPlaylist = forwardRef<WaveformPlaylistHandle, WaveformPlayl
 			props.showPlayState,
 			props.audioMode,
 			props.preload,
+			props.crossOrigin,
 			props.waveformStyle,
 			props.height,
 			props.samples,
