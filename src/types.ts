@@ -216,8 +216,11 @@ export interface WaveformPlaylistLayoutProps {
  *      per-track content fields (`url`, `title`, `artist`, `artwork`,
  *      `album`, `markers`, `waveform`) which come from `tracks`, the
  *      `style`/`src` aliases, the player's `layout` (overridden above),
- *      `audioMode` (the playlist always owns its audio), and the lifecycle
- *      callbacks.
+ *      and `audioMode` (the playlist always owns its audio). The player
+ *      callbacks (`onLoad`, `onPlay`, `onPause`, `onEnd`, `onTimeUpdate`,
+ *      `onError`, `onNextTrack`, `onPreviousTrack`) are included: the
+ *      playlist runs each after its own handling (playlist 1.8.0+). A new
+ *      handler never re-mounts the playlist.
  *   3. **React extras** — the required `tracks` array plus the DOM
  *      pass-throughs `id`, `className`, and `style`.
  *
@@ -248,12 +251,6 @@ export interface WaveformPlaylistProps
 			| 'markers'
 			| 'waveform'
 			| 'audioMode'
-			| 'onLoad'
-			| 'onPlay'
-			| 'onPause'
-			| 'onEnd'
-			| 'onError'
-			| 'onTimeUpdate'
 		> {
 	// ── Tracks (required) ──────────────────────────────────────────────
 

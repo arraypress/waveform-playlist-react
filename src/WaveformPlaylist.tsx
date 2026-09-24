@@ -28,6 +28,14 @@
  * and `layout` are the primary identity inputs; the full pass-through
  * option set is listed exhaustively in the effect's dep array.
  *
+ * ## Player callbacks
+ *
+ * `onLoad`, `onPlay`, `onPause`, `onEnd`, `onTimeUpdate`, `onError`,
+ * `onNextTrack` and `onPreviousTrack` reach the embedded player: the
+ * playlist (1.8.0+) runs each after its own handling. They are handed over
+ * as stable trampolines reading the latest prop, so they are NOT re-mount
+ * inputs.
+ *
  * For imperative navigation — `selectTrack()`, `nextTrack()`,
  * `previousTrack()`, etc. — grab the instance through a `ref`:
  *
@@ -78,6 +86,7 @@ import {
 	forwardRef,
 	useEffect,
 	useImperativeHandle,
+	useLayoutEffect,
 	useRef,
 	type ForwardedRef,
 } from 'react';
@@ -89,6 +98,25 @@ import type {
 	WaveformPlaylistProps,
 	WaveformPlaylistTrack,
 } from './types';
+
+/**
+ * The core player callbacks the playlist runs after its own handling
+ * (playlist 1.8.0+). Forwarded as stable trampolines that read the latest
+ * prop at call time, so a new handler never re-mounts the playlist.
+ */
+const CALLBACK_PROPS = [
+	'onLoad',
+	'onPlay',
+	'onPause',
+	'onEnd',
+	'onTimeUpdate',
+	'onError',
+	'onNextTrack',
+	'onPreviousTrack',
+] as const;
+
+type CallbackProp = (typeof CALLBACK_PROPS)[number];
+type Callbacks = Pick<WaveformPlaylistProps, CallbackProp>;
 
 /**
  * Convert a `WaveformPlaylistProps` object into the options shape the
@@ -215,6 +243,18 @@ export const WaveformPlaylist = forwardRef<WaveformPlaylistHandle, WaveformPlayl
 		const hostRef = useRef<HTMLDivElement | null>(null);
 		const instanceRef = useRef<unknown>(null);
 
+		/* Latest callback props. The trampolines handed to the playlist read
+		 * from here at call time, so swapping a handler takes effect without
+		 * a re-mount (callbacks are deliberately NOT in the effect deps).
+		 * Initialised from this render's props and refreshed before paint on
+		 * every render — the same pattern as waveform-player-react. */
+		const pickCallbacks = (): Callbacks =>
+			Object.fromEntries(CALLBACK_PROPS.map((name) => [name, props[name]])) as Callbacks;
+		const callbacksRef = useRef<Callbacks>(pickCallbacks());
+		useLayoutEffect(() => {
+			callbacksRef.current = pickCallbacks();
+		});
+
 		const { tracks } = props;
 
 		/* Stable serialisation of the tracks used as an identity key in the
@@ -256,8 +296,16 @@ export const WaveformPlaylist = forwardRef<WaveformPlaylistHandle, WaveformPlayl
 						return;
 					}
 
+					const opts = buildPlaylistOptions(props);
+					for (const name of CALLBACK_PROPS) {
+						opts[name] = (...args: unknown[]) =>
+							(callbacksRef.current[name] as ((...a: unknown[]) => void) | null | undefined)?.(
+								...args
+							);
+					}
+
 					try {
-						localInstance = new WaveformPlaylistClass(host, buildPlaylistOptions(props));
+						localInstance = new WaveformPlaylistClass(host, opts);
 						instanceRef.current = localInstance;
 					} catch (err) {
 						/* The most common cause is a missing core player —

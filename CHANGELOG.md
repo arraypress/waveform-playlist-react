@@ -20,6 +20,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `WaveformPlaylistLayoutProps`. Types come from the playlist core's
   `index.d.ts` (1.8.0 declares them all); against an older core they fall
   back to the same 1.8.0 shapes instead of degrading to `unknown`.
+- Player callback props — `onLoad`, `onPlay`, `onPause`, `onEnd`,
+  `onTimeUpdate`, `onError`, `onNextTrack`, `onPreviousTrack` — forwarded
+  to the embedded player. Playlist 1.8.0 runs them after its own handling
+  (before, it overwrote them, which is why the wrapper didn't offer them;
+  `onNextTrack` / `onPreviousTrack` were even accepted by the props type
+  and silently dropped). Handed over as stable trampolines that read the latest prop, so a new
+  handler never re-mounts the playlist.
 
 ### Fixed
 

@@ -362,6 +362,57 @@ describe('<WaveformPlaylist> — option pass-through', () => {
 	});
 });
 
+// ─── Player callbacks ────────────────────────────────────────────────────
+
+describe('<WaveformPlaylist> — player callbacks', () => {
+	/* The playlist (1.8.0+) chains these after its own handling, so each
+	 * reaches the embedded player's same-named callback. */
+	const CALLBACKS = [
+		'onLoad',
+		'onPlay',
+		'onPause',
+		'onEnd',
+		'onTimeUpdate',
+		'onError',
+		'onNextTrack',
+		'onPreviousTrack',
+	] as const;
+
+	it('forwards every player callback prop to the playlist, with the core arguments', async () => {
+		const handlers = Object.fromEntries(CALLBACKS.map((name) => [name, vi.fn()]));
+		render(<WaveformPlaylist tracks={TWO_TRACKS} {...handlers} />);
+		await waitForMount();
+		const { opts } = ctorCalls[0];
+
+		for (const name of CALLBACKS) {
+			expect(typeof opts[name], name).toBe('function');
+			(opts[name] as (...a: unknown[]) => void)('a', 'b', 'c');
+			expect(handlers[name], name).toHaveBeenCalledWith('a', 'b', 'c');
+		}
+	});
+
+	it('reaches the latest handler without re-mounting when a callback changes', async () => {
+		const first = vi.fn();
+		const second = vi.fn();
+		const { rerender } = render(<WaveformPlaylist tracks={TWO_TRACKS} onPlay={first} />);
+		await waitForMount();
+
+		rerender(<WaveformPlaylist tracks={TWO_TRACKS} onPlay={second} />);
+		await new Promise<void>((resolve) => setTimeout(resolve, 50));
+		expect(ctorCalls).toHaveLength(1);
+
+		(ctorCalls[0].opts.onPlay as (p: unknown) => void)('player');
+		expect(first).not.toHaveBeenCalled();
+		expect(second).toHaveBeenCalledWith('player');
+	});
+
+	it('is a no-op when no handler is supplied', async () => {
+		render(<WaveformPlaylist tracks={TWO_TRACKS} />);
+		await waitForMount();
+		expect(() => (ctorCalls[0].opts.onEnd as (p: unknown) => void)?.('player')).not.toThrow();
+	});
+});
+
 // ─── Lifecycle: unmount + re-mount on identity change ────────────────────
 
 describe('<WaveformPlaylist> — lifecycle', () => {
