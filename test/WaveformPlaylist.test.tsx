@@ -183,6 +183,23 @@ describe('<WaveformPlaylist> — track markup', () => {
 		expect(el.dataset.markers).toBe(JSON.stringify(markers));
 	});
 
+	it('renders per-track waveform peaks as data-waveform (JSON array, or a URL verbatim)', () => {
+		const peaks = [0.1, 0.5, 0.9];
+		const { container } = render(
+			<WaveformPlaylist
+				tracks={[
+					{ url: '/audio/a.mp3', waveform: peaks },
+					{ url: '/audio/b.mp3', waveform: '/peaks/b.json' },
+					{ url: '/audio/c.mp3' },
+				]}
+			/>
+		);
+		const [a, b, c] = Array.from(container.querySelectorAll('[data-track]')) as HTMLElement[];
+		expect(a.dataset.waveform).toBe(JSON.stringify(peaks));
+		expect(b.dataset.waveform).toBe('/peaks/b.json');
+		expect(c.hasAttribute('data-waveform')).toBe(false);
+	});
+
 	it('renders [data-chapter] children with time, color, and label', () => {
 		const { container } = render(
 			<WaveformPlaylist

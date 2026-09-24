@@ -458,6 +458,9 @@ export const WaveformPlaylist = forwardRef<WaveformPlaylistHandle, WaveformPlayl
 						data-album={track.album}
 						data-duration={track.duration}
 						data-markers={track.markers ? JSON.stringify(track.markers) : undefined}
+						data-waveform={
+							Array.isArray(track.waveform) ? JSON.stringify(track.waveform) : track.waveform
+						}
 					>
 						{(track.chapters ?? []).map((chapter, ci) => (
 							<div

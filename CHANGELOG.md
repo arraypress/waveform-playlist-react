@@ -27,6 +27,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `onNextTrack` / `onPreviousTrack` were even accepted by the props type
   and silently dropped). Handed over as stable trampolines that read the latest prop, so a new
   handler never re-mounts the playlist.
+- Per-track `waveform` peaks on `WaveformPlaylistTrackInput`
+  (`number[] | string`), rendered as the track's `data-waveform`: an array
+  is JSON-encoded, a string (e.g. a `.json` peaks URL) passed through.
+  With peaks the player skips decoding that track's audio. Playlist 1.8.0
+  is the first version that reads `data-waveform`.
 
 ### Fixed
 
