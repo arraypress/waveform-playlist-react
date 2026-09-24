@@ -24,7 +24,7 @@ ignores runtime changes.
   Both ship hand-authored `index.d.ts`, so the types can't drift; **the runtime
   forward list can.**
 - Forward a new *player* option only if the playlist should pass it to its embedded
-  players — usually yes (`preload`, `audioMode`, `waveformStyle`, `height` all do).
+  players — usually yes (`preload`, `waveformStyle`, `height` all do) — never `audioMode`, which the playlist ignores since 1.8.0 (it always owns its audio).
 - The playlist's JS is imported dynamically inside `useEffect` (SSR-safe).
 - Add a test under `test/` + a `CHANGELOG.md` entry.
 
