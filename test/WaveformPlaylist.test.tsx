@@ -311,6 +311,28 @@ describe('<WaveformPlaylist> — option pass-through', () => {
 		expect(opts.barPosition).toBe('top');
 	});
 
+	it('forwards waveformGradient, seekHandle, buttonSize, buttonRadius, artworkPosition', async () => {
+		render(
+			<WaveformPlaylist
+				tracks={TWO_TRACKS}
+				waveformGradient="diagonal"
+				seekHandle
+				buttonSize="4rem"
+				buttonRadius={0}
+				artworkPosition="button"
+			/>
+		);
+		await waitForMount();
+		const { opts } = ctorCalls[0];
+
+		expect(opts.waveformGradient).toBe('diagonal');
+		expect(opts.seekHandle).toBe(true);
+		expect(opts.buttonSize).toBe('4rem');
+		// 0 is a real value (a square button), not "unset".
+		expect(opts.buttonRadius).toBe(0);
+		expect(opts.artworkPosition).toBe('button');
+	});
+
 	it('accepts layout="hero"', async () => {
 		render(<WaveformPlaylist tracks={TWO_TRACKS} layout="hero" />);
 		await waitForMount();

@@ -21,6 +21,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `index.d.ts` (1.8.0 declares them all); against an older core they fall
   back to the same 1.8.0 shapes instead of degrading to `unknown`.
 
+### Fixed
+
+- `waveformGradient`, `seekHandle`, `buttonSize`, `buttonRadius` and
+  `artworkPosition` reach the embedded player. All five are core player
+  options the props type inherited, but the options builder never
+  forwarded them — they typechecked and were silently dropped. They are
+  now forwarded and in the remount dependency array.
+
 ### Removed
 
 - The `audioMode` prop. The playlist always owns its audio, and an

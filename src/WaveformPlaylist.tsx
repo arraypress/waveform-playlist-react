@@ -133,6 +133,8 @@ function buildPlaylistOptions(props: WaveformPlaylistProps): Record<string, unkn
 	if (props.barWidth !== undefined) opts.barWidth = props.barWidth;
 	if (props.barSpacing !== undefined) opts.barSpacing = props.barSpacing;
 	if (props.barRadius !== undefined) opts.barRadius = props.barRadius;
+	if (props.waveformGradient !== undefined) opts.waveformGradient = props.waveformGradient;
+	if (props.seekHandle !== undefined) opts.seekHandle = props.seekHandle;
 
 	/* Colours */
 	if (props.colorPreset !== undefined) opts.colorPreset = props.colorPreset;
@@ -155,6 +157,9 @@ function buildPlaylistOptions(props: WaveformPlaylistProps): Record<string, unkn
 	if (props.bpm !== undefined) opts.bpm = props.bpm;
 	if (props.buttonAlign !== undefined) opts.buttonAlign = props.buttonAlign;
 	if (props.buttonStyle !== undefined) opts.buttonStyle = props.buttonStyle;
+	if (props.buttonSize !== undefined) opts.buttonSize = props.buttonSize;
+	if (props.buttonRadius !== undefined) opts.buttonRadius = props.buttonRadius;
+	if (props.artworkPosition !== undefined) opts.artworkPosition = props.artworkPosition;
 
 	/* Accessibility */
 	if (props.accessibleSeek !== undefined) opts.accessibleSeek = props.accessibleSeek;
@@ -304,6 +309,8 @@ export const WaveformPlaylist = forwardRef<WaveformPlaylistHandle, WaveformPlayl
 			props.barWidth,
 			props.barSpacing,
 			props.barRadius,
+			props.waveformGradient,
+			props.seekHandle,
 			props.colorPreset,
 			props.waveformColor,
 			props.progressColor,
@@ -320,6 +327,9 @@ export const WaveformPlaylist = forwardRef<WaveformPlaylistHandle, WaveformPlayl
 			props.bpm,
 			props.buttonAlign,
 			props.buttonStyle,
+			props.buttonSize,
+			props.buttonRadius,
+			props.artworkPosition,
 			props.accessibleSeek,
 			props.seekLabel,
 			props.seekValueText,
