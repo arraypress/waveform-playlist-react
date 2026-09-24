@@ -88,6 +88,7 @@ import {
 	useImperativeHandle,
 	useLayoutEffect,
 	useRef,
+	useState,
 	type ForwardedRef,
 } from 'react';
 // Aliased to avoid colliding with this file's own `WaveformPlaylist`
@@ -217,6 +218,33 @@ function buildPlaylistOptions(props: WaveformPlaylistProps): Record<string, unkn
 }
 
 /**
+ * Split a class string into its tokens (empty strings dropped).
+ *
+ * @param value - A space-separated class list.
+ * @returns The individual class names.
+ */
+function classTokens(value: string): string[] {
+	return value.split(/\s+/).filter(Boolean);
+}
+
+/**
+ * Bring the host's *user* classes (`wfp-host` + `className`) up to date
+ * without touching anything else on the element: drop the tokens this
+ * component applied last time that are no longer wanted, then add every
+ * wanted token (`classList.add` is idempotent).
+ *
+ * @param el - The host element.
+ * @param applied - Tokens this component applied on the previous sync.
+ * @param wanted - Tokens it wants now.
+ */
+function syncHostClasses(el: HTMLElement, applied: readonly string[], wanted: readonly string[]): void {
+	for (const token of applied) {
+		if (!wanted.includes(token)) el.classList.remove(token);
+	}
+	if (wanted.length) el.classList.add(...wanted);
+}
+
+/**
  * `WaveformPlaylist` — React component wrapping
  * `@arraypress/waveform-playlist`.
  *
@@ -242,6 +270,39 @@ export const WaveformPlaylist = forwardRef<WaveformPlaylistHandle, WaveformPlayl
 	function WaveformPlaylist(props, ref: ForwardedRef<WaveformPlaylistHandle>) {
 		const hostRef = useRef<HTMLDivElement | null>(null);
 		const instanceRef = useRef<unknown>(null);
+
+		/**
+		 * Host `class` handling.
+		 *
+		 * The playlist owns part of the host's class list — `waveform-playlist`,
+		 * `wp-hero-layout`, `wp-grid-layout`, `wp-density-compact`,
+		 * `wp-cover-top`, `wp-no-artist`, `wp-minimal` — added at construction
+		 * and removed by `destroy()`. If React owned the `class` attribute, a
+		 * `className`-only change — which rightly doesn't remount — would
+		 * rewrite it and strip those classes for good, breaking the layout.
+		 *
+		 * So React renders the class **once**: `renderedClass` is frozen at the
+		 * first render (server markup and hydration still carry the user's
+		 * classes), and because the value never changes React never writes the
+		 * attribute again. Later `className` changes are applied here with
+		 * `classList`, touching only the tokens this component put there.
+		 *
+		 * Chosen over mounting the playlist into an inner element (which would
+		 * leave React's element alone by construction) because that changes the
+		 * DOM users style: `.my-class.waveform-playlist` selectors stop matching,
+		 * and CSS variables set through `style` / `className` would land on a
+		 * parent, shadowed by the core's own `.waveform-playlist` defaults.
+		 */
+		const hostClass = ['wfp-host', props.className].filter(Boolean).join(' ');
+		const [renderedClass] = useState(hostClass);
+		const appliedClassesRef = useRef<string[]>(classTokens(renderedClass));
+		useLayoutEffect(() => {
+			const el = hostRef.current;
+			if (!el) return;
+			const wanted = classTokens(hostClass);
+			syncHostClasses(el, appliedClassesRef.current, wanted);
+			appliedClassesRef.current = wanted;
+		}, [hostClass]);
 
 		/* Latest callback props. The trampolines handed to the playlist read
 		 * from here at call time, so swapping a handler takes effect without
@@ -444,7 +505,8 @@ export const WaveformPlaylist = forwardRef<WaveformPlaylistHandle, WaveformPlayl
 			<div
 				ref={hostRef}
 				id={props.id}
-				className={['wfp-host', props.className].filter(Boolean).join(' ')}
+				/* Frozen at first render — see "Host `class` handling". */
+				className={renderedClass}
 				style={props.style}
 			>
 				{tracks.map((track, i) => (

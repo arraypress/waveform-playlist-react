@@ -40,6 +40,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   options the props type inherited, but the options builder never
   forwarded them — they typechecked and were silently dropped. They are
   now forwarded and in the remount dependency array.
+- Changing only `className` no longer strips the playlist's own host
+  classes (`waveform-playlist`, `wp-hero-layout`, `wp-grid-layout`,
+  `wp-density-compact`, `wp-cover-top`, `wp-no-artist`, `wp-minimal`). A
+  `className`-only change (correctly) doesn't remount, so when React rewrote
+  the `class` attribute those were gone until some other prop changed —
+  hero/grid layouts collapsed and density/artist styling reverted. React now
+  renders `class` once (server markup and hydration are unchanged) and later
+  `className` changes are applied with `classList`, adding and removing only
+  the user's tokens. The DOM structure is unchanged — the tracks and the
+  playlist UI still live directly in the one host `<div>`. (Mounting the
+  playlist into an inner element was considered and rejected: it would break
+  `.your-class.waveform-playlist` selectors and push CSS variables set via
+  `style` / `className` onto a parent, where the core's defaults shadow them.)
 
 ### Changed
 

@@ -71,9 +71,16 @@ vi.mock('@arraypress/waveform-playlist', () => {
 		const ui = document.createElement('div');
 		ui.className = 'wp-generated';
 		el.appendChild(ui);
+		/* Layout classes on the host itself (addOwnClass): recorded, skipped
+		 * when the author already set them, removed again by destroy(). */
+		const ownClasses = ['waveform-playlist', ...(opts.layout === 'hero' ? ['wp-hero-layout'] : [])].filter(
+			(c) => !el.classList.contains(c)
+		);
+		el.classList.add(...ownClasses);
 		stub.destroy.mockImplementation(() => {
 			lifecycle.push(`destroy:${n}`);
 			ui.remove();
+			el.classList.remove(...ownClasses);
 			trackEls.forEach((t) => (t.style.display = ''));
 		});
 
@@ -545,6 +552,45 @@ describe('<WaveformPlaylist> — lifecycle', () => {
 		rerender(<WaveformPlaylist tracks={TWO_TRACKS} className="b" />);
 		await new Promise<void>((resolve) => setTimeout(resolve, 50));
 		expect(ctorCalls).toHaveLength(1);
+	});
+
+	it('keeps the playlist\'s host classes when only className changes', async () => {
+		/* No remount happens (above), so nothing would put the layout classes
+		 * back if React rewrote the `class` attribute — the playlist would
+		 * lose its layout/styling until some other prop changed. */
+		const { container, rerender } = render(
+			<WaveformPlaylist tracks={TWO_TRACKS} layout="hero" className="first" />
+		);
+		await waitForMount();
+		const host = container.querySelector('div')!;
+		expect(host.classList.contains('wp-hero-layout')).toBe(true);
+
+		rerender(<WaveformPlaylist tracks={TWO_TRACKS} layout="hero" className="second" />);
+		await new Promise<void>((resolve) => setTimeout(resolve, 50));
+
+		expect(ctorCalls).toHaveLength(1);
+		expect(host.className.split(' ').sort()).toEqual(
+			['second', 'waveform-playlist', 'wfp-host', 'wp-hero-layout'].sort()
+		);
+
+		rerender(<WaveformPlaylist tracks={TWO_TRACKS} layout="hero" />);
+		expect(host.className.split(' ').sort()).toEqual(
+			['waveform-playlist', 'wfp-host', 'wp-hero-layout'].sort()
+		);
+	});
+
+	it('a remount after a className change still carries the current className', async () => {
+		const { container, rerender } = render(
+			<WaveformPlaylist tracks={TWO_TRACKS} layout="hero" className="first" />
+		);
+		await waitForMount();
+		rerender(<WaveformPlaylist tracks={TWO_TRACKS} layout="hero" className="second" />);
+		rerender(<WaveformPlaylist tracks={TWO_TRACKS} layout="list" className="second" />);
+		await waitForMount(2);
+
+		const host = container.querySelector('div')!;
+		expect(ctorCalls[1].el).toBe(host);
+		expect(host.className.split(' ').sort()).toEqual(['second', 'waveform-playlist', 'wfp-host'].sort());
 	});
 });
 
