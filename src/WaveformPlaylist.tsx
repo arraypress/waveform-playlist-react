@@ -113,8 +113,10 @@ function buildPlaylistOptions(props: WaveformPlaylistProps): Record<string, unkn
 
 	/* Pass-through player options — forwarded to the embedded player the
 	 * playlist drives. Per-track content (url/title/artist/artwork/album/
-	 * markers/waveform) is NOT here; it comes from the rendered markup. */
-	if (props.audioMode !== undefined) opts.audioMode = props.audioMode;
+	 * markers/waveform) is NOT here; it comes from the rendered markup.
+	 * `audioMode` is deliberately absent: the playlist always owns its
+	 * audio (1.8.0 ignores the option), and an `'external'` embedded player
+	 * would dispatch request-play events nobody answers. */
 	if (props.preload !== undefined) opts.preload = props.preload;
 	if (props.crossOrigin !== undefined) opts.crossOrigin = props.crossOrigin;
 
@@ -282,7 +284,6 @@ export const WaveformPlaylist = forwardRef<WaveformPlaylistHandle, WaveformPlayl
 			props.showChapterMarkers,
 			props.chapterMarkerColor,
 			props.showPlayState,
-			props.audioMode,
 			props.preload,
 			props.crossOrigin,
 			props.waveformStyle,

@@ -286,6 +286,21 @@ describe('<WaveformPlaylist> — option pass-through', () => {
 		expect('crossOrigin' in opts).toBe(false);
 	});
 
+	it('does not forward audioMode (the playlist always owns its audio)', async () => {
+		// An `'external'` player inside a playlist dispatches request-play
+		// events nobody answers; playlist 1.8.0 ignores the option, and the
+		// wrapper no longer accepts or forwards it.
+		render(
+			<WaveformPlaylist
+				tracks={TWO_TRACKS}
+				// @ts-expect-error — audioMode is not a playlist prop
+				audioMode="external"
+			/>
+		);
+		await waitForMount();
+		expect('audioMode' in ctorCalls[0].opts).toBe(false);
+	});
+
 	it('forwards arrays as-is (playbackRates)', async () => {
 		const rates = [0.5, 1, 2];
 		render(<WaveformPlaylist tracks={TWO_TRACKS} playbackRates={rates} />);

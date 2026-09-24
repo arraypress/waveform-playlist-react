@@ -163,8 +163,9 @@ export interface WaveformPlaylistHandle {
  *      behaviour option from the core `WaveformPlayerOptions`, minus the
  *      per-track content fields (`url`, `title`, `artist`, `artwork`,
  *      `album`, `markers`, `waveform`) which come from `tracks`, the
- *      `style`/`src` aliases, the player's `layout` (overridden above), and
- *      the lifecycle callbacks.
+ *      `style`/`src` aliases, the player's `layout` (overridden above),
+ *      `audioMode` (the playlist always owns its audio), and the lifecycle
+ *      callbacks.
  *   3. **React extras** — the required `tracks` array plus the DOM
  *      pass-throughs `id`, `className`, and `style`.
  *
@@ -193,6 +194,7 @@ export interface WaveformPlaylistProps
 			| 'album'
 			| 'markers'
 			| 'waveform'
+			| 'audioMode'
 			| 'onLoad'
 			| 'onPlay'
 			| 'onPause'
