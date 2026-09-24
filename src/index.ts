@@ -24,6 +24,7 @@
  * ```ts
  * import type {
  *   WaveformPlaylistProps,
+ *   WaveformPlaylistLayoutProps,
  *   WaveformPlaylistHandle,
  *   WaveformPlaylistTrackInput,
  *   WaveformPlaylistChapterInput,
@@ -45,6 +46,7 @@ export { WaveformPlaylist as default } from './WaveformPlaylist';
 
 export type {
 	WaveformPlaylistProps,
+	WaveformPlaylistLayoutProps,
 	WaveformPlaylistHandle,
 	WaveformPlaylistTrackInput,
 	WaveformPlaylistChapterInput,

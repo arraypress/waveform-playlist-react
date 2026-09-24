@@ -286,6 +286,37 @@ describe('<WaveformPlaylist> — option pass-through', () => {
 		expect('crossOrigin' in opts).toBe(false);
 	});
 
+	it('forwards the hero / grid layouts and their options', async () => {
+		render(
+			<WaveformPlaylist
+				tracks={TWO_TRACKS}
+				layout="grid"
+				showArtist={false}
+				coverSize={120}
+				thumbnailSize={64}
+				density="compact"
+				coverPosition="top"
+				barPosition="top"
+			/>
+		);
+		await waitForMount();
+		const { opts } = ctorCalls[0];
+
+		expect(opts.layout).toBe('grid');
+		expect(opts.showArtist).toBe(false);
+		expect(opts.coverSize).toBe(120);
+		expect(opts.thumbnailSize).toBe(64);
+		expect(opts.density).toBe('compact');
+		expect(opts.coverPosition).toBe('top');
+		expect(opts.barPosition).toBe('top');
+	});
+
+	it('accepts layout="hero"', async () => {
+		render(<WaveformPlaylist tracks={TWO_TRACKS} layout="hero" />);
+		await waitForMount();
+		expect(ctorCalls[0].opts.layout).toBe('hero');
+	});
+
 	it('does not forward audioMode (the playlist always owns its audio)', async () => {
 		// An `'external'` player inside a playlist dispatches request-play
 		// events nobody answers; playlist 1.8.0 ignores the option, and the

@@ -110,6 +110,12 @@ function buildPlaylistOptions(props: WaveformPlaylistProps): Record<string, unkn
 	if (props.showChapterMarkers !== undefined) opts.showChapterMarkers = props.showChapterMarkers;
 	if (props.chapterMarkerColor !== undefined) opts.chapterMarkerColor = props.chapterMarkerColor;
 	if (props.showPlayState !== undefined) opts.showPlayState = props.showPlayState;
+	if (props.showArtist !== undefined) opts.showArtist = props.showArtist;
+	if (props.coverSize !== undefined) opts.coverSize = props.coverSize;
+	if (props.thumbnailSize !== undefined) opts.thumbnailSize = props.thumbnailSize;
+	if (props.density !== undefined) opts.density = props.density;
+	if (props.coverPosition !== undefined) opts.coverPosition = props.coverPosition;
+	if (props.barPosition !== undefined) opts.barPosition = props.barPosition;
 
 	/* Pass-through player options — forwarded to the embedded player the
 	 * playlist drives. Per-track content (url/title/artist/artwork/album/
@@ -284,6 +290,12 @@ export const WaveformPlaylist = forwardRef<WaveformPlaylistHandle, WaveformPlayl
 			props.showChapterMarkers,
 			props.chapterMarkerColor,
 			props.showPlayState,
+			props.showArtist,
+			props.coverSize,
+			props.thumbnailSize,
+			props.density,
+			props.coverPosition,
+			props.barPosition,
 			props.preload,
 			props.crossOrigin,
 			props.waveformStyle,
