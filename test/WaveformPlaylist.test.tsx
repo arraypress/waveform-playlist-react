@@ -47,12 +47,38 @@ const makeStub = () => {
  * the host element it was given and the options object, then returns the
  * latest `stub` so destroy() / nextTrack() etc. are observable.
  */
-const ctorCalls: Array<{ el: HTMLElement; opts: Record<string, unknown>; stub: ReturnType<typeof makeStub> }> = [];
+const ctorCalls: Array<{
+	el: HTMLElement;
+	opts: Record<string, unknown>;
+	stub: ReturnType<typeof makeStub>;
+	/** `data-url` of each `[data-track]` the instance parsed at construction. */
+	parsedUrls: string[];
+}> = [];
+
+/** Construct / destroy events in order, to assert destroy → construct. */
+const lifecycle: string[] = [];
 
 vi.mock('@arraypress/waveform-playlist', () => {
 	const WaveformPlaylistCtor = vi.fn(function (this: unknown, el: HTMLElement, opts: Record<string, unknown>) {
 		const stub = makeStub();
-		ctorCalls.push({ el, opts, stub });
+		const n = ctorCalls.length;
+
+		/* Model the library's DOM contract (playlist 1.8.0): parse the
+		 * [data-track] children, hide them, and append generated UI; destroy()
+		 * removes only what it generated and un-hides the tracks in place. */
+		const trackEls = Array.from(el.querySelectorAll<HTMLElement>('[data-track]'));
+		trackEls.forEach((t) => (t.style.display = 'none'));
+		const ui = document.createElement('div');
+		ui.className = 'wp-generated';
+		el.appendChild(ui);
+		stub.destroy.mockImplementation(() => {
+			lifecycle.push(`destroy:${n}`);
+			ui.remove();
+			trackEls.forEach((t) => (t.style.display = ''));
+		});
+
+		lifecycle.push(`construct:${n}`);
+		ctorCalls.push({ el, opts, stub, parsedUrls: trackEls.map((t) => t.dataset.url ?? '') });
 		// Mutate `this` so the `new` call sees the stub's methods.
 		Object.assign(this as object, stub);
 	}) as unknown as new (el: HTMLElement, opts: Record<string, unknown>) => unknown;
@@ -64,8 +90,9 @@ vi.mock('@arraypress/waveform-playlist', () => {
 });
 
 beforeEach(() => {
-	ctorCalls.length = 0;
 	cleanup();
+	ctorCalls.length = 0;
+	lifecycle.length = 0;
 });
 
 /** A couple of representative tracks reused across tests. */
@@ -461,6 +488,42 @@ describe('<WaveformPlaylist> — lifecycle', () => {
 		expect(ctorCalls).toHaveLength(2);
 		// First instance got destroyed during the re-mount.
 		expect(ctorCalls[0].stub.destroy).toHaveBeenCalled();
+	});
+
+	it('re-mounting on a prop change hands the new instance the rendered tracks', async () => {
+		// The library's destroy() used to wipe the host, taking the
+		// wrapper-rendered [data-track] children with it, so the rebuilt
+		// playlist was empty. Playlist 1.8.0 leaves them in place.
+		const { rerender, container } = render(<WaveformPlaylist tracks={TWO_TRACKS} height={60} />);
+		await waitForMount();
+
+		rerender(<WaveformPlaylist tracks={TWO_TRACKS} height={90} />);
+		await waitForMount(2);
+
+		expect(lifecycle).toEqual(['construct:0', 'destroy:0', 'construct:1']);
+		expect(ctorCalls[1].opts.height).toBe(90);
+		expect(ctorCalls[1].parsedUrls).toEqual(['/audio/a.mp3', '/audio/b.mp3']);
+
+		const host = container.querySelector('.wfp-host')!;
+		expect(host.querySelectorAll('[data-track]')).toHaveLength(2);
+		// Only the live instance's UI remains.
+		expect(host.querySelectorAll('.wp-generated')).toHaveLength(1);
+	});
+
+	it('re-mounting on a tracks change hands the new instance the new tracks', async () => {
+		const { rerender, container } = render(<WaveformPlaylist tracks={TWO_TRACKS} />);
+		await waitForMount();
+
+		rerender(
+			<WaveformPlaylist
+				tracks={[...TWO_TRACKS, { url: '/audio/c.mp3', title: 'Track C' }]}
+			/>
+		);
+		await waitForMount(2);
+
+		expect(lifecycle).toEqual(['construct:0', 'destroy:0', 'construct:1']);
+		expect(ctorCalls[1].parsedUrls).toEqual(['/audio/a.mp3', '/audio/b.mp3', '/audio/c.mp3']);
+		expect(container.querySelectorAll('.wfp-host [data-track]')).toHaveLength(3);
 	});
 
 	it('re-mounts when layout changes', async () => {
